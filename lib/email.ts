@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { getResendApiKey } from "./env";
 
+const RECIPIENT_EMAIL = "psj0110@gmail.com";
 const DEFAULT_FROM = "onboarding@resend.dev";
 
 export function buildReportEmailHtml(
@@ -41,8 +42,7 @@ export function buildReportEmailSubject(keyword: string, date = new Date()): str
 
 export async function sendReportEmail(
   keyword: string,
-  reportHtml: string,
-  recipientEmail: string
+  reportHtml: string
 ): Promise<void> {
   const apiKey = getResendApiKey();
   if (!apiKey) {
@@ -51,13 +51,14 @@ export async function sendReportEmail(
     );
   }
 
+  const recipient = process.env.REPORT_EMAIL ?? RECIPIENT_EMAIL;
   const from = process.env.RESEND_FROM_EMAIL ?? DEFAULT_FROM;
   const html = buildReportEmailHtml(keyword, reportHtml);
 
   const resend = new Resend(apiKey);
   const { error } = await resend.emails.send({
     from,
-    to: recipientEmail,
+    to: recipient,
     subject: buildReportEmailSubject(keyword),
     html,
   });

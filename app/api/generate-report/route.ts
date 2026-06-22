@@ -6,13 +6,13 @@ import {
   buildReportEmailSubject,
   sendReportEmail,
 } from "@/lib/email";
-import { isValidEmail, normalizeEmail } from "@/lib/validate";
+
+const RECIPIENT_EMAIL = "psj0110@gmail.com";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const keyword = body.keyword?.trim();
-    const emailInput = body.email?.trim();
 
     if (!keyword) {
       return NextResponse.json(
@@ -21,28 +21,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!emailInput) {
-      return NextResponse.json(
-        { error: "수신 이메일 주소를 입력해주세요." },
-        { status: 400 }
-      );
-    }
-
-    if (!isValidEmail(emailInput)) {
-      return NextResponse.json(
-        { error: "올바른 이메일 주소 형식을 입력해주세요." },
-        { status: 400 }
-      );
-    }
-
-    const recipientEmail = normalizeEmail(emailInput);
+    const recipientEmail = process.env.REPORT_EMAIL ?? RECIPIENT_EMAIL;
 
     const articles = await fetchRecentNews(keyword);
     const report = await generateReport(keyword, articles);
     const emailHtml = buildReportEmailHtml(keyword, report);
     const emailSubject = buildReportEmailSubject(keyword);
 
-    await sendReportEmail(keyword, report, recipientEmail);
+    await sendReportEmail(keyword, report);
 
     return NextResponse.json({
       success: true,
