@@ -414,9 +414,18 @@
   margin-bottom: 8px;
 }
 
-.emailBody ul {
+.emailBody ul,
+.emailBody ol {
   padding-left: 20px;
-  margin-bottom: 12px;
+  margin: 8px 0 16px;
+}
+
+.emailBody li {
+  margin-bottom: 6px;
+}
+
+.emailBody ul {
+  list-style-type: disc;
 }
 
 .emailBody a {
