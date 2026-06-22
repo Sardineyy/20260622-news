@@ -11,7 +11,7 @@ export async function generateReport(
   const apiKey = getGeminiApiKey();
   if (!apiKey) {
     throw new Error(
-      "GEMINI_API_KEY 환경변수가 설정되지 않았습니다. (GOOGLE_API_KEY, GOOGLE_GENERATIVE_AI_API_KEY 도 사용 가능)"
+      "Gemini API 키 환경변수가 설정되지 않았습니다. (GEMINI_API_KEY, Gemini_api 등)"
     );
   }
 
