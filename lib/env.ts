@@ -9,7 +9,13 @@ export function getGeminiApiKey(): string | undefined {
 }
 
 export function getResendApiKey(): string | undefined {
-  return process.env.RESEND_API_KEY ?? process.env.Resend_api;
+  return (
+    process.env.RESEND_API_KEY ??
+    process.env.Resend_api ??
+    process.env.Resend_API ??
+    process.env.resend_api_key ??
+    process.env.RESEND_KEY
+  );
 }
 
 export function getEnvStatus() {
@@ -18,5 +24,13 @@ export function getEnvStatus() {
     resend: Boolean(getResendApiKey()),
     reportEmail: process.env.REPORT_EMAIL ?? "psj0110@gmail.com",
     vercelEnv: process.env.VERCEL_ENV ?? "local",
+    checkedKeys: {
+      gemini: ["GEMINI_API_KEY", "Gemini_api", "GOOGLE_API_KEY"].filter(
+        (k) => process.env[k]
+      ),
+      resend: ["RESEND_API_KEY", "Resend_api", "Resend_API", "RESEND_KEY"].filter(
+        (k) => process.env[k]
+      ),
+    },
   };
 }
