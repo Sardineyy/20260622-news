@@ -233,47 +233,84 @@
   margin-top: 6px;
 }
 
-.reportPreview {
-  margin-top: 20px;
-  padding: 20px;
+.emailPreview {
+  margin-top: 24px;
   background: #fff;
-  border-radius: 10px;
-  font-size: 14px;
-  line-height: 1.7;
-  max-height: 500px;
-  overflow-y: auto;
-  text-align: left;
-  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.08),
+    0 10px 24px -4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: fadeIn 0.4s ease;
 }
 
-.reportPreview h1 {
+.emailPreviewHeader {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fafafa;
+}
+
+.emailPreviewTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.emailSubject {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.emailSubjectLabel {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #7c3aed;
+  background: #ede9fe;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+
+.emailBody {
+  padding: 8px;
+  max-height: 70vh;
+  overflow-y: auto;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.emailBody h1 {
   font-size: 20px;
   margin-bottom: 12px;
 }
 
-.reportPreview h2 {
+.emailBody h2 {
   font-size: 16px;
   margin: 16px 0 8px;
   color: #7c3aed;
 }
 
-.reportPreview h3 {
+.emailBody h3 {
   font-size: 14px;
   margin: 12px 0 6px;
   color: #4b5563;
   font-weight: 600;
 }
 
-.reportPreview p {
+.emailBody p {
   margin-bottom: 8px;
 }
 
-.reportPreview ul {
+.emailBody ul {
   padding-left: 20px;
   margin-bottom: 12px;
 }
 
-.reportPreview a {
+.emailBody a {
   color: #7c3aed;
 }
 

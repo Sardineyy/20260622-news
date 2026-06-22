@@ -2,7 +2,43 @@ import { Resend } from "resend";
 import { getResendApiKey } from "./env";
 
 const RECIPIENT_EMAIL = "psj0110@gmail.com";
-const DEFAULT_FROM = "AI News Reporter <onboarding@resend.dev>";
+const DEFAULT_FROM = "onboarding@resend.dev";
+
+export function buildReportEmailHtml(
+  keyword: string,
+  reportHtml: string,
+  date = new Date()
+): string {
+  const today = date.toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  return `
+    <div style="font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
+      <div style="background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; padding: 24px; border-radius: 12px; margin-bottom: 24px;">
+        <h1 style="margin: 0; font-size: 24px;">AI News Reporter</h1>
+        <p style="margin: 8px 0 0; opacity: 0.9;">키워드: <strong>${keyword}</strong> | 생성일: ${today}</p>
+      </div>
+      ${reportHtml}
+      <hr style="margin: 32px 0; border: none; border-top: 1px solid #e0e0e0;" />
+      <p style="color: #888; font-size: 12px; text-align: center;">
+        이 보고서는 AI News Reporter에 의해 자동 생성되었습니다.<br/>
+        Gemini 2.5 Flash 모델을 사용하여 요약되었습니다.
+      </p>
+    </div>
+  `;
+}
+
+export function buildReportEmailSubject(keyword: string, date = new Date()): string {
+  const today = date.toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  return `[AI News Reporter] "${keyword}" 주간 이슈 보고서 - ${today}`;
+}
 
 export async function sendReportEmail(
   keyword: string,
@@ -17,32 +53,14 @@ export async function sendReportEmail(
 
   const recipient = process.env.REPORT_EMAIL ?? RECIPIENT_EMAIL;
   const from = process.env.RESEND_FROM_EMAIL ?? DEFAULT_FROM;
-
-  const today = new Date().toLocaleDateString("ko-KR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const html = buildReportEmailHtml(keyword, reportHtml);
 
   const resend = new Resend(apiKey);
   const { error } = await resend.emails.send({
     from,
     to: recipient,
-    subject: `[AI News Reporter] "${keyword}" 주간 이슈 보고서 - ${today}`,
-    html: `
-      <div style="font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
-        <div style="background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; padding: 24px; border-radius: 12px; margin-bottom: 24px;">
-          <h1 style="margin: 0; font-size: 24px;">AI News Reporter</h1>
-          <p style="margin: 8px 0 0; opacity: 0.9;">키워드: <strong>${keyword}</strong> | 생성일: ${today}</p>
-        </div>
-        ${reportHtml}
-        <hr style="margin: 32px 0; border: none; border-top: 1px solid #e0e0e0;" />
-        <p style="color: #888; font-size: 12px; text-align: center;">
-          이 보고서는 AI News Reporter에 의해 자동 생성되었습니다.<br/>
-          Gemini 2.5 Flash 모델을 사용하여 요약되었습니다.
-        </p>
-      </div>
-    `,
+    subject: buildReportEmailSubject(keyword),
+    html,
   });
 
   if (error) {

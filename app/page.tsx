@@ -19,7 +19,8 @@ export default function Home() {
   const [result, setResult] = useState<{
     type: "success" | "error";
     message: string;
-    report?: string;
+    emailSubject?: string;
+    emailHtml?: string;
     articleCount?: number;
   } | null>(null);
 
@@ -45,7 +46,8 @@ export default function Home() {
         setResult({
           type: "success",
           message: data.message,
-          report: data.report,
+          emailSubject: data.emailSubject,
+          emailHtml: data.emailHtml,
           articleCount: data.articleCount,
         });
       }
@@ -146,13 +148,25 @@ export default function Home() {
                 수집된 기사: {result.articleCount}건 | 수신: psj0110@gmail.com
               </p>
             )}
-            {result.report && (
-              <div
-                className={styles.reportPreview}
-                dangerouslySetInnerHTML={{ __html: result.report }}
-              />
-            )}
           </div>
+        )}
+
+        {result?.type === "success" && result.emailHtml && (
+          <section className={styles.emailPreview}>
+            <div className={styles.emailPreviewHeader}>
+              <h2 className={styles.emailPreviewTitle}>발송된 보고서</h2>
+              {result.emailSubject && (
+                <p className={styles.emailSubject}>
+                  <span className={styles.emailSubjectLabel}>제목</span>
+                  {result.emailSubject}
+                </p>
+              )}
+            </div>
+            <div
+              className={styles.emailBody}
+              dangerouslySetInnerHTML={{ __html: result.emailHtml }}
+            />
+          </section>
         )}
       </main>
 
