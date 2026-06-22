@@ -1,0 +1,276 @@
+.main {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.container {
+  width: 100%;
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.logo {
+  font-size: 48px;
+  font-weight: 400;
+  letter-spacing: -1px;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.logoAi {
+  color: #4285f4;
+}
+
+.logoNews {
+  color: #ea4335;
+}
+
+.logoReporter {
+  color: #34a853;
+}
+
+.description {
+  font-size: 14px;
+  color: #5f6368;
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.searchForm {
+  width: 100%;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  border: 1px solid #dfe1e5;
+  border-radius: 24px;
+  padding: 0 16px;
+  height: 46px;
+  transition: box-shadow 0.2s;
+  background: #fff;
+}
+
+.searchBox:hover,
+.searchBox:focus-within {
+  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+  border-color: rgba(223, 225, 229, 0);
+}
+
+.searchIcon {
+  width: 20px;
+  height: 20px;
+  color: #9aa0a6;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  color: #202124;
+  background: transparent;
+}
+
+.searchInput::placeholder {
+  color: #9aa0a6;
+}
+
+.examples {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.examplesLabel {
+  font-size: 13px;
+  color: #70757a;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.exampleTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.exampleTag {
+  background: #f1f3f4;
+  border: none;
+  border-radius: 16px;
+  padding: 6px 14px;
+  font-size: 13px;
+  color: #3c4043;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.exampleTag:hover:not(:disabled) {
+  background: #e8eaed;
+}
+
+.exampleTag:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  gap: 12px;
+}
+
+.submitButton {
+  background: #f8f9fa;
+  border: 1px solid #f8f9fa;
+  border-radius: 4px;
+  color: #3c4043;
+  font-size: 14px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 220px;
+  justify-content: center;
+}
+
+.submitButton:hover:not(:disabled) {
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  background: #f1f3f4;
+  border-color: #dadce0;
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #dadce0;
+  border-top-color: #4285f4;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.result {
+  width: 100%;
+  margin-top: 32px;
+  padding: 20px;
+  border-radius: 12px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.resultSuccess {
+  background: #e6f4ea;
+  border: 1px solid #ceead6;
+}
+
+.resultError {
+  background: #fce8e6;
+  border: 1px solid #f5c6c2;
+}
+
+.resultMessage {
+  font-size: 15px;
+  font-weight: 500;
+  color: #202124;
+}
+
+.resultMeta {
+  font-size: 13px;
+  color: #5f6368;
+  margin-top: 6px;
+}
+
+.reportPreview {
+  margin-top: 20px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.7;
+  max-height: 500px;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.reportPreview h1 {
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+.reportPreview h2 {
+  font-size: 16px;
+  margin: 16px 0 8px;
+  color: #1a73e8;
+}
+
+.reportPreview p {
+  margin-bottom: 8px;
+}
+
+.reportPreview ul {
+  padding-left: 20px;
+  margin-bottom: 12px;
+}
+
+.reportPreview a {
+  color: #1a73e8;
+}
+
+.footer {
+  margin-top: 48px;
+  text-align: center;
+}
+
+.footer p {
+  font-size: 12px;
+  color: #9aa0a6;
+}
+
+@media (max-width: 480px) {
+  .logo {
+    font-size: 36px;
+  }
+
+  .submitButton {
+    min-width: 100%;
+    font-size: 13px;
+  }
+}
