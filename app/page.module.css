@@ -137,6 +137,48 @@
   cursor: not-allowed;
 }
 
+.emailSection {
+  margin-top: 20px;
+}
+
+.emailInput {
+  width: 100%;
+  height: 48px;
+}
+
+.inputInvalid {
+  border-color: #fca5a5;
+}
+
+.inputInvalid:focus {
+  border-color: #f87171;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15);
+}
+
+.rememberLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: #6b7280;
+  cursor: pointer;
+  user-select: none;
+}
+
+.rememberCheckbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #7c3aed;
+  cursor: pointer;
+}
+
+.emailError {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #dc2626;
+}
+
 .spinner {
   width: 16px;
   height: 16px;

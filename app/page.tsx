@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import styles from "./page.module.css";
+import { isValidEmail } from "@/lib/validate";
 
 const EXAMPLE_KEYWORDS = [
   "OpenAI",
@@ -14,10 +15,14 @@ const EXAMPLE_KEYWORDS = [
 ];
 
 const SEARCH_HISTORY_KEY = "ai-news-reporter-search-history";
+const SAVED_EMAIL_KEY = "ai-news-reporter-saved-email";
+const REMEMBER_EMAIL_KEY = "ai-news-reporter-remember-email";
 const DEFAULT_RECIPIENT = "psj0110@gmail.com";
 
 export default function Home() {
   const [keyword, setKeyword] = useState("");
+  const [email, setEmail] = useState(DEFAULT_RECIPIENT);
+  const [rememberEmail, setRememberEmail] = useState(true);
   const [loading, setLoading] = useState(false);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [result, setResult] = useState<{
@@ -32,12 +37,47 @@ export default function Home() {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(SEARCH_HISTORY_KEY);
-      if (stored) setSearchHistory(JSON.parse(stored));
+      const storedHistory = localStorage.getItem(SEARCH_HISTORY_KEY);
+      if (storedHistory) setSearchHistory(JSON.parse(storedHistory));
+
+      const shouldRemember = localStorage.getItem(REMEMBER_EMAIL_KEY);
+      const remembered = shouldRemember !== "false";
+      setRememberEmail(remembered);
+
+      if (remembered) {
+        const savedEmail = localStorage.getItem(SAVED_EMAIL_KEY);
+        if (savedEmail) setEmail(savedEmail);
+      }
     } catch {
       setSearchHistory([]);
     }
   }, []);
+
+  const persistEmail = (value: string, remember: boolean) => {
+    if (remember) {
+      localStorage.setItem(SAVED_EMAIL_KEY, value);
+      localStorage.setItem(REMEMBER_EMAIL_KEY, "true");
+    } else {
+      localStorage.removeItem(SAVED_EMAIL_KEY);
+      localStorage.setItem(REMEMBER_EMAIL_KEY, "false");
+    }
+  };
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    if (rememberEmail && isValidEmail(value)) {
+      localStorage.setItem(SAVED_EMAIL_KEY, value.trim());
+    }
+  };
+
+  const handleRememberChange = (checked: boolean) => {
+    setRememberEmail(checked);
+    if (checked && isValidEmail(email)) {
+      persistEmail(email.trim(), true);
+    } else {
+      persistEmail("", false);
+    }
+  };
 
   const saveSearchHistory = (history: string[]) => {
     setSearchHistory(history);
@@ -60,9 +100,15 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!keyword.trim()) return;
+    const trimmedKeyword = keyword.trim();
+    const trimmedEmail = email.trim();
 
-    const searchedKeyword = keyword.trim();
+    if (!trimmedKeyword || !isValidEmail(trimmedEmail)) return;
+
+    if (rememberEmail) {
+      persistEmail(trimmedEmail, true);
+    }
+
     setLoading(true);
     setResult(null);
 
@@ -70,7 +116,10 @@ export default function Home() {
       const res = await fetch("/api/generate-report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ keyword: searchedKeyword }),
+        body: JSON.stringify({
+          keyword: trimmedKeyword,
+          email: trimmedEmail,
+        }),
       });
 
       const data = await res.json();
@@ -78,15 +127,15 @@ export default function Home() {
       if (!res.ok) {
         setResult({ type: "error", message: data.error });
       } else {
-        addToSearchHistory(searchedKeyword);
+        addToSearchHistory(trimmedKeyword);
         setResult({
           type: "success",
           message: data.message,
           emailSubject: data.emailSubject,
           emailHtml: data.emailHtml,
           articleCount: data.articleCount,
-          recipientEmail: data.recipientEmail ?? DEFAULT_RECIPIENT,
-          searchedKeyword,
+          recipientEmail: data.recipientEmail,
+          searchedKeyword: trimmedKeyword,
         });
       }
     } catch {
@@ -108,6 +157,9 @@ export default function Home() {
     setKeyword(item);
     setResult(null);
   };
+
+  const emailIsValid = isValidEmail(email);
+  const canSubmit = keyword.trim().length > 0 && emailIsValid && !loading;
 
   return (
     <div className={styles.page}>
@@ -146,7 +198,7 @@ export default function Home() {
             <button
               type="submit"
               className={styles.submitButton}
-              disabled={loading || !keyword.trim()}
+              disabled={!canSubmit}
             >
               {loading ? (
                 <>
@@ -157,6 +209,39 @@ export default function Home() {
                 "보고서 생성 및 이메일 발송"
               )}
             </button>
+          </div>
+
+          <div className={styles.emailSection}>
+            <label className={styles.inputLabel} htmlFor="email">
+              수신 이메일
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => handleEmailChange(e.target.value)}
+              placeholder="example@gmail.com"
+              className={`${styles.searchInput} ${styles.emailInput} ${
+                email && !emailIsValid ? styles.inputInvalid : ""
+              }`}
+              disabled={loading}
+              autoComplete="email"
+            />
+            <label className={styles.rememberLabel}>
+              <input
+                type="checkbox"
+                checked={rememberEmail}
+                onChange={(e) => handleRememberChange(e.target.checked)}
+                disabled={loading}
+                className={styles.rememberCheckbox}
+              />
+              <span>이메일 주소 기억하기</span>
+            </label>
+            {email && !emailIsValid && (
+              <p className={styles.emailError}>
+                올바른 이메일 주소를 입력해주세요.
+              </p>
+            )}
           </div>
 
           <div className={styles.examples}>
