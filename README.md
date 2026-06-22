@@ -32,6 +32,21 @@ cp .env.example .env.local
 | `SMTP_PASS` | Gmail [앱 비밀번호](https://myaccount.google.com/apppasswords) |
 | `REPORT_EMAIL` | 보고서 수신 이메일 (기본: psj0110@gmail.com) |
 
+### Vercel 배포 환경변수
+
+[Vercel 대시보드](https://vercel.com) → 프로젝트 → **Settings** → **Environment Variables**에서 아래 변수를 **Production**에 등록하세요.
+
+| 변수 | 필수 | 설명 |
+|------|------|------|
+| `GEMINI_API_KEY` | ✅ | Gemini API 키 (`GOOGLE_API_KEY` 이름도 인식) |
+| `SMTP_USER` | ✅ | Gmail 발송 계정 |
+| `SMTP_PASS` | ✅ | Gmail 앱 비밀번호 |
+| `REPORT_EMAIL` | 선택 | 수신 이메일 (기본: psj0110@gmail.com) |
+
+등록 후 **Deployments** → 최신 배포 → **Redeploy**로 재배포해야 적용됩니다.
+
+환경변수 상태 확인: `GET /api/health`
+
 ### 3. 개발 서버 실행
 
 ```bash

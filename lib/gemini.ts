@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { NewsArticle } from "./news";
+import { getGeminiApiKey } from "./env";
 
 const MODEL_NAME = "gemini-2.5-flash";
 
@@ -7,9 +8,11 @@ export async function generateReport(
   keyword: string,
   articles: NewsArticle[]
 ): Promise<string> {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = getGeminiApiKey();
   if (!apiKey) {
-    throw new Error("GEMINI_API_KEY 환경변수가 설정되지 않았습니다.");
+    throw new Error(
+      "GEMINI_API_KEY 환경변수가 설정되지 않았습니다. (GOOGLE_API_KEY, GOOGLE_GENERATIVE_AI_API_KEY 도 사용 가능)"
+    );
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
