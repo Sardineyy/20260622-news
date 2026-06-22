@@ -28,8 +28,7 @@ cp .env.example .env.local
 | 변수 | 설명 |
 |------|------|
 | `GEMINI_API_KEY` | [Google AI Studio](https://aistudio.google.com/apikey)에서 발급 |
-| `SMTP_USER` | Gmail 발송 계정 |
-| `SMTP_PASS` | Gmail [앱 비밀번호](https://myaccount.google.com/apppasswords) |
+| `RESEND_API_KEY` | [Resend](https://resend.com)에서 발급 (무료 월 3,000통) |
 | `REPORT_EMAIL` | 보고서 수신 이메일 (기본: psj0110@gmail.com) |
 
 ### Vercel 배포 환경변수
@@ -38,10 +37,11 @@ cp .env.example .env.local
 
 | 변수 | 필수 | 설명 |
 |------|------|------|
-| `GEMINI_API_KEY` | ✅ | Gemini API 키 (`GOOGLE_API_KEY` 이름도 인식) |
-| `SMTP_USER` | ✅ | Gmail 발송 계정 |
-| `SMTP_PASS` | ✅ | Gmail 앱 비밀번호 |
+| `GEMINI_API_KEY` 또는 `Gemini_api` | ✅ | Gemini API 키 |
+| `RESEND_API_KEY` 또는 `Resend_api` | ✅ | Resend API 키 |
 | `REPORT_EMAIL` | 선택 | 수신 이메일 (기본: psj0110@gmail.com) |
+
+> **Resend 무료 플랜 안내**: 도메인 없이 사용 시 `onboarding@resend.dev`에서 **가입한 이메일로만** 발송 가능합니다. `psj0110@gmail.com`으로 받으려면 Resend 가입 시 해당 주소를 사용하세요.
 
 등록 후 **Deployments** → 최신 배포 → **Redeploy**로 재배포해야 적용됩니다.
 
@@ -67,4 +67,4 @@ npm run dev
 - **Frontend**: Next.js 15, React 19
 - **AI**: Google Gemini 2.5 Flash
 - **News**: Google News RSS
-- **Email**: Nodemailer (Gmail SMTP)
+- **Email**: Resend (무료 API)

@@ -8,12 +8,15 @@ export function getGeminiApiKey(): string | undefined {
   );
 }
 
+export function getResendApiKey(): string | undefined {
+  return process.env.RESEND_API_KEY ?? process.env.Resend_api;
+}
+
 export function getEnvStatus() {
   return {
     gemini: Boolean(getGeminiApiKey()),
-    smtpUser: Boolean(process.env.SMTP_USER),
-    smtpPass: Boolean(process.env.SMTP_PASS),
-    reportEmail: Boolean(process.env.REPORT_EMAIL ?? "psj0110@gmail.com"),
+    resend: Boolean(getResendApiKey()),
+    reportEmail: process.env.REPORT_EMAIL ?? "psj0110@gmail.com",
     vercelEnv: process.env.VERCEL_ENV ?? "local",
   };
 }

@@ -1,32 +1,22 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
+import { getResendApiKey } from "./env";
 
 const RECIPIENT_EMAIL = "psj0110@gmail.com";
+const DEFAULT_FROM = "AI News Reporter <onboarding@resend.dev>";
 
 export async function sendReportEmail(
   keyword: string,
   reportHtml: string
 ): Promise<void> {
-  const smtpUser = process.env.SMTP_USER;
-  const smtpPass = process.env.SMTP_PASS;
-  const smtpHost = process.env.SMTP_HOST ?? "smtp.gmail.com";
-  const smtpPort = Number(process.env.SMTP_PORT ?? 587);
-  const recipient = process.env.REPORT_EMAIL ?? RECIPIENT_EMAIL;
-
-  if (!smtpUser || !smtpPass) {
+  const apiKey = getResendApiKey();
+  if (!apiKey) {
     throw new Error(
-      "SMTP_USER 및 SMTP_PASS 환경변수가 설정되지 않았습니다."
+      "RESEND_API_KEY 환경변수가 설정되지 않았습니다. Resend(https://resend.com)에서 무료 API 키를 발급하세요."
     );
   }
 
-  const transporter = nodemailer.createTransport({
-    host: smtpHost,
-    port: smtpPort,
-    secure: false,
-    auth: {
-      user: smtpUser,
-      pass: smtpPass,
-    },
-  });
+  const recipient = process.env.REPORT_EMAIL ?? RECIPIENT_EMAIL;
+  const from = process.env.RESEND_FROM_EMAIL ?? DEFAULT_FROM;
 
   const today = new Date().toLocaleDateString("ko-KR", {
     year: "numeric",
@@ -34,13 +24,14 @@ export async function sendReportEmail(
     day: "numeric",
   });
 
-  await transporter.sendMail({
-    from: `"AI News Reporter" <${smtpUser}>`,
+  const resend = new Resend(apiKey);
+  const { error } = await resend.emails.send({
+    from,
     to: recipient,
     subject: `[AI News Reporter] "${keyword}" 주간 이슈 보고서 - ${today}`,
     html: `
       <div style="font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
-        <div style="background: linear-gradient(135deg, #4285f4, #34a853); color: white; padding: 24px; border-radius: 12px; margin-bottom: 24px;">
+        <div style="background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; padding: 24px; border-radius: 12px; margin-bottom: 24px;">
           <h1 style="margin: 0; font-size: 24px;">AI News Reporter</h1>
           <p style="margin: 8px 0 0; opacity: 0.9;">키워드: <strong>${keyword}</strong> | 생성일: ${today}</p>
         </div>
@@ -53,4 +44,8 @@ export async function sendReportEmail(
       </div>
     `,
   });
+
+  if (error) {
+    throw new Error(`이메일 발송 실패: ${error.message}`);
+  }
 }
