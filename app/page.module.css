@@ -257,6 +257,13 @@
   color: #7c3aed;
 }
 
+.reportPreview h3 {
+  font-size: 14px;
+  margin: 12px 0 6px;
+  color: #4b5563;
+  font-weight: 600;
+}
+
 .reportPreview p {
   margin-bottom: 8px;
 }
