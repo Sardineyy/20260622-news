@@ -4,12 +4,13 @@ import { useState } from "react";
 import styles from "./page.module.css";
 
 const EXAMPLE_KEYWORDS = [
-  "ChatGPT",
+  "OpenAI",
   "Gemini",
-  "생성형 AI",
   "AI 반도체",
-  "AI 규제",
-  "머신러닝",
+  "생성형 AI",
+  "스타트업 투자",
+  "공공데이터",
+  "신약개발",
 ];
 
 export default function Home() {
@@ -64,44 +65,57 @@ export default function Home() {
   };
 
   return (
-    <main className={styles.main}>
-      <div className={styles.container}>
-        <header className={styles.header}>
-          <h1 className={styles.logo}>
-            <span className={styles.logoAi}>AI</span>
-            <span className={styles.logoNews}>News</span>
-            <span className={styles.logoReporter}>Reporter</span>
+    <div className={styles.page}>
+      <header className={styles.hero}>
+        <div className={styles.heroInner}>
+          <p className={styles.eyebrow}>AI NEWS REPORTER</p>
+          <h1 className={styles.title}>
+            <span className={styles.titleIcon} aria-hidden="true">
+              📰
+            </span>
+            AI News Reporter
           </h1>
           <p className={styles.description}>
             키워드를 입력하면 최근 7일 이내 주요 이슈를 자동으로 수집하여
             보고서를 생성하고 이메일로 발송합니다.
           </p>
-        </header>
+        </div>
+      </header>
 
-        <form onSubmit={handleSubmit} className={styles.searchForm}>
-          <div className={styles.searchBox}>
-            <svg
-              className={styles.searchIcon}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
+      <main className={styles.content}>
+        <form onSubmit={handleSubmit} className={styles.card}>
+          <label className={styles.inputLabel} htmlFor="keyword">
+            키워드
+          </label>
+
+          <div className={styles.inputRow}>
             <input
+              id="keyword"
               type="text"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              placeholder="AI 관련 키워드를 입력하세요"
+              placeholder="예: OpenAI, AI 반도체, 신약개발 ..."
               className={styles.searchInput}
               disabled={loading}
             />
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={loading || !keyword.trim()}
+            >
+              {loading ? (
+                <>
+                  <span className={styles.spinner} />
+                  생성 중...
+                </>
+              ) : (
+                "보고서 생성 및 이메일 발송"
+              )}
+            </button>
           </div>
 
           <div className={styles.examples}>
-            <span className={styles.examplesLabel}>예시 키워드:</span>
+            <span className={styles.examplesLabel}>예시:</span>
             <div className={styles.exampleTags}>
               {EXAMPLE_KEYWORDS.map((example) => (
                 <button
@@ -116,29 +130,14 @@ export default function Home() {
               ))}
             </div>
           </div>
-
-          <div className={styles.buttonGroup}>
-            <button
-              type="submit"
-              className={styles.submitButton}
-              disabled={loading || !keyword.trim()}
-            >
-              {loading ? (
-                <>
-                  <span className={styles.spinner} />
-                  보고서 생성 중...
-                </>
-              ) : (
-                "보고서 생성 및 이메일 발송"
-              )}
-            </button>
-          </div>
         </form>
 
         {result && (
           <div
             className={`${styles.result} ${
-              result.type === "success" ? styles.resultSuccess : styles.resultError
+              result.type === "success"
+                ? styles.resultSuccess
+                : styles.resultError
             }`}
           >
             <p className={styles.resultMessage}>{result.message}</p>
@@ -155,11 +154,13 @@ export default function Home() {
             )}
           </div>
         )}
+      </main>
 
-        <footer className={styles.footer}>
-          <p>Powered by Gemini 2.5 Flash</p>
-        </footer>
-      </div>
-    </main>
+      <footer className={styles.footer}>
+        <p>
+          Powered by Gemini (Google Search Grounding) · Resend · Next.js
+        </p>
+      </footer>
+    </div>
   );
 }
