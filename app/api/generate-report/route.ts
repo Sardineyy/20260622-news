@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
       articleCount: articles.length,
       emailSubject,
       emailHtml,
+      recipientEmail: process.env.REPORT_EMAIL ?? "psj0110@gmail.com",
     });
   } catch (error) {
     console.error("Report generation error:", error);

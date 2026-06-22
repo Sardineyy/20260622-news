@@ -193,6 +193,120 @@
   cursor: not-allowed;
 }
 
+.historyRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.historyContent {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.historyLabel {
+  font-size: 13px;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.historyTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.historyTag {
+  background: #ede9fe;
+  border: none;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  color: #6d28d9;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.historyTag:hover:not(:disabled) {
+  background: #ddd6fe;
+}
+
+.historyTag:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.clearHistoryButton {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 6px 0;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+
+.clearHistoryButton:hover:not(:disabled) {
+  color: #6b7280;
+  text-decoration: underline;
+}
+
+.clearHistoryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.successBanner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 16px 20px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 12px;
+  animation: fadeIn 0.3s ease;
+}
+
+.successIcon {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  color: #059669;
+}
+
+.successIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.successText {
+  font-size: 15px;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.successText strong {
+  color: #047857;
+  font-weight: 700;
+}
+
+.articleCount {
+  color: #6b7280;
+  font-weight: 400;
+}
+
 .result {
   margin-top: 24px;
   padding: 20px 24px;
@@ -209,11 +323,6 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.resultSuccess {
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
 }
 
 .resultError {
@@ -348,5 +457,14 @@
     min-height: 52px;
     height: auto;
     padding: 12px 20px;
+  }
+
+  .historyRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .clearHistoryButton {
+    align-self: flex-end;
   }
 }

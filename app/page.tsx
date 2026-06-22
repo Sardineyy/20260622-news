@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./page.module.css";
 
 const EXAMPLE_KEYWORDS = [
@@ -13,21 +13,56 @@ const EXAMPLE_KEYWORDS = [
   "신약개발",
 ];
 
+const SEARCH_HISTORY_KEY = "ai-news-reporter-search-history";
+const DEFAULT_RECIPIENT = "psj0110@gmail.com";
+
 export default function Home() {
   const [keyword, setKeyword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [result, setResult] = useState<{
     type: "success" | "error";
     message: string;
     emailSubject?: string;
     emailHtml?: string;
     articleCount?: number;
+    recipientEmail?: string;
+    searchedKeyword?: string;
   } | null>(null);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(SEARCH_HISTORY_KEY);
+      if (stored) setSearchHistory(JSON.parse(stored));
+    } catch {
+      setSearchHistory([]);
+    }
+  }, []);
+
+  const saveSearchHistory = (history: string[]) => {
+    setSearchHistory(history);
+    localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(history));
+  };
+
+  const addToSearchHistory = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    const next = [trimmed, ...searchHistory.filter((k) => k !== trimmed)].slice(
+      0,
+      10
+    );
+    saveSearchHistory(next);
+  };
+
+  const clearSearchHistory = () => {
+    saveSearchHistory([]);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!keyword.trim()) return;
 
+    const searchedKeyword = keyword.trim();
     setLoading(true);
     setResult(null);
 
@@ -35,7 +70,7 @@ export default function Home() {
       const res = await fetch("/api/generate-report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ keyword: keyword.trim() }),
+        body: JSON.stringify({ keyword: searchedKeyword }),
       });
 
       const data = await res.json();
@@ -43,12 +78,15 @@ export default function Home() {
       if (!res.ok) {
         setResult({ type: "error", message: data.error });
       } else {
+        addToSearchHistory(searchedKeyword);
         setResult({
           type: "success",
           message: data.message,
           emailSubject: data.emailSubject,
           emailHtml: data.emailHtml,
           articleCount: data.articleCount,
+          recipientEmail: data.recipientEmail ?? DEFAULT_RECIPIENT,
+          searchedKeyword,
         });
       }
     } catch {
@@ -63,6 +101,11 @@ export default function Home() {
 
   const handleExampleClick = (example: string) => {
     setKeyword(example);
+    setResult(null);
+  };
+
+  const handleHistoryClick = (item: string) => {
+    setKeyword(item);
     setResult(null);
   };
 
@@ -132,22 +175,59 @@ export default function Home() {
               ))}
             </div>
           </div>
+
+          {searchHistory.length > 0 && (
+            <div className={styles.historyRow}>
+              <div className={styles.historyContent}>
+                <span className={styles.historyLabel}>검색 기록:</span>
+                <div className={styles.historyTags}>
+                  {searchHistory.map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      className={styles.historyTag}
+                      onClick={() => handleHistoryClick(item)}
+                      disabled={loading}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <button
+                type="button"
+                className={styles.clearHistoryButton}
+                onClick={clearSearchHistory}
+                disabled={loading}
+              >
+                검색 기록 삭제하기
+              </button>
+            </div>
+          )}
         </form>
 
-        {result && (
-          <div
-            className={`${styles.result} ${
-              result.type === "success"
-                ? styles.resultSuccess
-                : styles.resultError
-            }`}
-          >
+        {result?.type === "success" && result.recipientEmail && (
+          <div className={styles.successBanner} role="status">
+            <span className={styles.successIcon} aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </span>
+            <p className={styles.successText}>
+              보고서를{" "}
+              <strong>{result.recipientEmail}</strong> 주소로 발송했습니다.
+              메일함을 확인해 주세요.
+            </p>
+          </div>
+        )}
+
+        {result?.type === "error" && (
+          <div className={`${styles.result} ${styles.resultError}`}>
             <p className={styles.resultMessage}>{result.message}</p>
-            {result.type === "success" && result.articleCount !== undefined && (
-              <p className={styles.resultMeta}>
-                수집된 기사: {result.articleCount}건 | 수신: psj0110@gmail.com
-              </p>
-            )}
           </div>
         )}
 
@@ -159,6 +239,17 @@ export default function Home() {
                 <p className={styles.emailSubject}>
                   <span className={styles.emailSubjectLabel}>제목</span>
                   {result.emailSubject}
+                </p>
+              )}
+              {result.searchedKeyword && (
+                <p className={styles.emailSubject}>
+                  <span className={styles.emailSubjectLabel}>키워드</span>
+                  {result.searchedKeyword}
+                  {result.articleCount !== undefined && (
+                    <span className={styles.articleCount}>
+                      · 수집 기사 {result.articleCount}건
+                    </span>
+                  )}
                 </p>
               )}
             </div>
